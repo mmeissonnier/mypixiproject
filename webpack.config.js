@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
-const nodeExternals = require('webpack-node-externals');
+const htmlWebpackPlugin = require('html-webpack-plugin');
 
 const HOST = 'localhost';
 const PORT = '9000';
@@ -12,15 +12,15 @@ module.exports = {
   ],
   devtool: process.env.WEBPACK_DEVTOOL || 'source-map',
   output: {
-    path: path.join(__dirname, 'public'),
+    path: path.join(__dirname, 'build'),
     publicPath: '/',
-    filename: '[hash].bundle.js',
+    filename: '[name].bundle.js',
   },
   module: {
     rules: [
       {
         test: /\.jsx?$/,
-        exclude: 'node_modules',
+        exclude: './node_modules',
         loader: 'babel-loader',
         options: {
           presets: ["es2015"]
@@ -29,9 +29,8 @@ module.exports = {
     ]
   },
   target: 'node',
-  externals: [nodeExternals()],
   devServer: {
-    contentBase: path.join(__dirname, 'public'),
+    contentBase: path.join(__dirname, 'src'),
     noInfo: true,
     inline: true,
     hot: true,
@@ -39,4 +38,8 @@ module.exports = {
     host: HOST,
     historyApiFallback: true,
   },
+  plugins: [new htmlWebpackPlugin({
+    template: './src/index.html'
+  })],
+  target: 'web',
 };
