@@ -25,10 +25,9 @@ module.exports = {
         options: {
           presets: ["es2015"]
         },
-      },
+      }
     ]
   },
-  target: 'node',
   devServer: {
     contentBase: path.join(__dirname, 'src'),
     noInfo: true,
