@@ -1,91 +1,61 @@
-import 'pixi.js';
+import Scene from './Scene';
+import KeyboardManager from './KeyboardManager';
 import Bump from './utils/bump.js';
+import Dragon from './Dragon.js';
+import AnimatedDragon from './AnimatedDragon.js';
 
-const raf = window.requestAnimationFrame;
+
+const scene = new Scene('container');
+const keyboard = new KeyboardManager();
 const bump = new Bump(PIXI);
 
-// SETUP STAGE
-const renderer = PIXI.autoDetectRenderer(640, 480, {antialias: false, transparent: false, resolution: 1} );
-const stage = new PIXI.Container();
-const spriteMap = {};
 const filter = new PIXI.filters.ColorMatrixFilter();
 
+//SETUP
 const setup = () => {
-  console.log("SETUP");
-  const dragon = new PIXI.Sprite(
-    PIXI.loader.resources.dragon.texture
-  );
-  dragon.scale.set(0.2, 0.2);
-  spriteMap.dragon = dragon;
+  const dragon = new Dragon();
   dragon.filters = [filter];
+  scene.addChild(dragon, 'dragon1');
 
-  stage.addChild(dragon);
-
-  const dragon2 = createAnimatedDragon();
+  const dragon2 = new AnimatedDragon();
   dragon2.position.set(300, 300);
-  dragon2.scale.set(0.2, 0.2);
-  dragon2.animationSpeed = 0.1;
   dragon2.play();
-  spriteMap.dragon2 = dragon2;
-
   dragon2.filters = [filter];
 
-  stage.addChild(dragon2);
+  scene.addChild(dragon2, 'dragon2');
 
-  raf(render);
+  //START RENDERING
+  scene.start();
+
+  //LISTEN TO KEYBOARD
+  keyboard.start();
+
+
+  // DEFINE TASKS
+  const collisionDetectionTask = () => {
+    if (bump.hitTestRectangle(scene.getChildById('dragon1'), scene.getChildById('dragon2'))) {
+      filter.negative();
+    } else {
+      filter.reset();
+    }
+  }
+
+  const moveDragonTask = () => {
+    const dragon = scene.getChildById('dragon2');
+    dragon.position.set(dragon.x + keyboard.translation.x, dragon.y + keyboard.translation.y);
+  }
+
+  scene.renderTasks.push(collisionDetectionTask);
+  scene.renderTasks.push(moveDragonTask);
 };
 
-const render = () => {
-//DO RENDERING STUFF HERE
-if (bump.hitTestRectangle(spriteMap.dragon, spriteMap.dragon2)) {
-  filter.negative();
-} else {
-  filter.reset();
-}
-  renderer.render(stage);
-  raf(render);
-};
 
 //LOAD SPRITES
 const loader = PIXI.loader
-.add('dragon','assets/1.png')
-.add('assets/2.png')
-.add('assets/3.png')
-.add('assets/4.png')
+.add('dragon1','assets/1.png')
+.add('dragon2','assets/2.png')
+.add('dragon3','assets/3.png')
+.add('dragon4','assets/4.png')
 .load(setup);
 
-//ANIMATED DRAGON
-const createAnimatedDragon = () => {
-  const texArray = [];
-  for (let i=0; i < 4; i++) {
-    texArray.push(PIXI.Texture.fromImage(`assets/${i+1}.png`))
-  }
-  return new PIXI.extras.AnimatedSprite(texArray);
-}
-
-
 loader.onError.add(() => {console.log('error')});
-
-document.querySelector('.container').appendChild(renderer.view);
-document.addEventListener('keydown',(event) => {
-  const translation = new PIXI.Point();
-  switch(event.key) {
-    case 'ArrowDown':
-      translation.y = 5;
-      break;
-    case 'ArrowUp':
-      translation.y = -5;
-      break;
-    case 'ArrowLeft':
-      translation.x = -5;
-      break;
-    case 'ArrowRight':
-      translation.x = 5;
-      break;
-    default:
-      break;
-  };
-
-  const curPos = spriteMap.dragon2.position;
-  spriteMap.dragon2.position.set(curPos.x + translation.x, curPos.y + translation.y);
-});
