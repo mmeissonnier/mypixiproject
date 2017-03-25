@@ -25,7 +25,7 @@ const setup = () => {
   scene.addChild(dragon2, 'dragon2');
 
   //START RENDERING
-  scene.start();
+  scene.render();
 
   //LISTEN TO KEYBOARD
   keyboard.start();
@@ -45,8 +45,8 @@ const setup = () => {
     dragon.position.set(dragon.x + keyboard.translation.x, dragon.y + keyboard.translation.y);
   }
 
-  scene.renderTasks.push(collisionDetectionTask);
-  scene.renderTasks.push(moveDragonTask);
+  scene.renderTasks.concat([collisionDetectionTask,
+                            moveDragonTask]);
 };
 
 
