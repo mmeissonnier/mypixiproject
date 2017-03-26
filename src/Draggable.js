@@ -14,8 +14,8 @@ export default class Draggable extends PIXI.Container {
     this.sprite.on('mousedown', (event) => {
       this.dragModeOn = true;
       this.dragAnchorPoint = event.data.global.clone();
-      this.dragAnchorPoint.x -= this.sprite.position.x;
-      this.dragAnchorPoint.y -= this.sprite.position.y;
+      this.dragAnchorPoint.x -= this.position.x;
+      this.dragAnchorPoint.y -= this.position.y;
     });
 
     this.sprite.on('mouseup', () => {
@@ -29,7 +29,7 @@ export default class Draggable extends PIXI.Container {
     this.sprite.on('mousemove', (event) => {
       if(this.dragModeOn){
           const nextPoint = new PIXI.Point((event.data.global.x - this.dragAnchorPoint.x), (event.data.global.y - this.dragAnchorPoint.y));
-          this.sprite.position.set(nextPoint.x, nextPoint.y);
+          this.position.set(nextPoint.x, nextPoint.y);
       }
     });
   }

@@ -1,12 +1,12 @@
 import 'pixi.js';
 
-export default class Scene {
+export default class Scene extends PIXI.Container {
   // SETUP STAGE
   constructor(container){
+    super();
     // CREATE RENDERER
     this.renderer = PIXI.autoDetectRenderer(640, 480, {antialias: false, transparent: false, resolution: 1} );
-    // CREATE A STAGE CONTAINER
-    this.stage = new PIXI.Container();
+    this.renderer.backgroundColor = 0x1f1f1f;
     this.spriteMap = {};
     this.renderTasks = [];
 
@@ -15,12 +15,10 @@ export default class Scene {
     this.getChildById = this.getChildById.bind(this);
 
     document.querySelector(`.${container}`).appendChild(this.renderer.view);
-
-    this.stage.on('click', () => {this.getMouseCoords();});
   }
 
   addChild(child, id){
-    this.stage.addChild(child);
+    super.addChild(child);
     if(id){
       this.spriteMap[id] = child;
     }
@@ -34,7 +32,7 @@ export default class Scene {
     //DO RENDERING TASKS HERE
     this.renderTasks.forEach((task) => { task() });
 
-    this.renderer.render(this.stage);
+    this.renderer.render(this);
     window.requestAnimationFrame(this.render);
   }
 

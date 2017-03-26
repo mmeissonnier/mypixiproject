@@ -46,8 +46,8 @@ const setup = () => {
     dragon.position.set(dragon.x + keyboard.translation.x, dragon.y + keyboard.translation.y);
   }
 
-  scene.renderTasks.concat([collisionDetectionTask,
-                            moveDragonTask]);
+  scene.renderTasks = [collisionDetectionTask,
+                            moveDragonTask];
 };
 
 
