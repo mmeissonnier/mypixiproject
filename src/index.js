@@ -1,4 +1,5 @@
 import Scene from './Scene';
+import Draggable from './Draggable';
 import KeyboardManager from './KeyboardManager';
 import Bump from './utils/bump.js';
 import Dragon from './Dragon.js';
@@ -13,13 +14,13 @@ const filter = new PIXI.filters.ColorMatrixFilter();
 
 //SETUP
 const setup = () => {
-  const dragon = new Dragon();
+  const dragon = new Draggable(new Dragon());
   dragon.filters = [filter];
   scene.addChild(dragon, 'dragon1');
 
-  const dragon2 = new AnimatedDragon();
+  const dragon2 = new Draggable(new AnimatedDragon());
   dragon2.position.set(300, 300);
-  dragon2.play();
+  dragon2.sprite.play();
   dragon2.filters = [filter];
 
   scene.addChild(dragon2, 'dragon2');

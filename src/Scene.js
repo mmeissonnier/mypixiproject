@@ -15,8 +15,10 @@ export default class Scene {
     this.getChildById = this.getChildById.bind(this);
 
     document.querySelector(`.${container}`).appendChild(this.renderer.view);
+
+    this.stage.on('click', () => {this.getMouseCoords();});
   }
-  
+
   addChild(child, id){
     this.stage.addChild(child);
     if(id){
